@@ -1,0 +1,85 @@
+{
+  "name": "@idleflowgames/capacitor-play-games",
+  "version": "0.1.0",
+  "description": "Capacitor 8 plugin for Google Play Games Services (Android) and Apple GameKit (iOS): sign-in, achievements, leaderboards, and saved games.",
+  "type": "module",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "android/consumer-rules.pro",
+    "android/proguard-rules.pro",
+    "dist/",
+    "ios/Plugin/",
+    "CapacitorPlayGames.podspec",
+    "Package.swift",
+    "CHANGELOG.md"
+  ],
+  "author": "Idle Flow Games <hello@idleflowgames.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/idleflowgames/capacitor-play-games#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idleflowgames/capacitor-play-games.git"
+  },
+  "bugs": {
+    "url": "https://github.com/idleflowgames/capacitor-play-games/issues"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native",
+    "ios",
+    "android",
+    "play-games",
+    "google-play-games",
+    "pgs",
+    "gamekit",
+    "game-center",
+    "achievements",
+    "leaderboards",
+    "saved-games"
+  ],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "rimraf dist && tsc && rollup -c rollup.config.mjs",
+    "docgen": "docgen --api PlayGamesPlugin --output-readme README.md",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "fmt": "biome check --write .",
+    "pack:check": "pnpm pack --dry-run",
+    "verify": "pnpm lint && pnpm typecheck && pnpm build && pnpm pack:check",
+    "prepublishOnly": "pnpm build"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^8.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/docgen": "^0.3.0",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.0.0",
+    "typescript": "^5.6.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "packageManager": "pnpm@11.8.0",
+  "engines": {
+    "node": ">=22"
+  }
+}
