@@ -1,6 +1,6 @@
 {
   "name": "@idleflowgames/capacitor-play-games",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Capacitor 8 plugin for Google Play Games Services (Android) and Apple GameKit (iOS): sign-in, achievements, leaderboards, and saved games.",
   "type": "module",
   "main": "dist/plugin.cjs.js",
