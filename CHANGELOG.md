@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-07-12
+
+### Added
+
+- `requestServerSideAccess({ serverClientId, forceRefresh? })` (Android): a
+  one-time OAuth 2.0 server auth code for the signed-in Play Games player, for a
+  backend to exchange for the authoritative player id (Play Games Services v2
+  `GamesSignInClient.requestServerSideAccess`).
+- `fetchIdentityVerificationSignature()` (iOS): a GameKit identity-verification
+  bundle (`GKLocalPlayer.fetchItems(forIdentityVerificationSignature:)`) a backend
+  verifies against Apple's certificate to trust the Game Center player id.
+- Both methods have a safe no-op web fallback and reject as unimplemented on the
+  non-owning native platform.
+
 ## [0.1.0] - 2026-06-20
 
 ### Added

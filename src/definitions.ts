@@ -40,6 +40,31 @@ export interface SnapshotMeta {
   modifiedAt: number;
 }
 
+/**
+ * A GameKit identity-verification bundle
+ * (`GKLocalPlayer.fetchItems(forIdentityVerificationSignature:)`). A third-party
+ * server verifies `signature` against the certificate at `publicKeyUrl` to trust
+ * the Game Center `playerId` without relaying it through the untrusted client.
+ */
+export interface IdentityVerificationSignature {
+  /** URL of Apple's public-key certificate used to verify `signature`. */
+  publicKeyUrl: string;
+  /** Base64-encoded signature over the verification payload. */
+  signature: string;
+  /** Base64-encoded random salt Apple mixed into the signed payload. */
+  salt: string;
+  /** Signature creation time, in epoch milliseconds (check freshness server-side). */
+  timestamp: number;
+  /** The player id the signature attests (GameKit `gamePlayerID`). */
+  playerId: string;
+  /** The app's bundle id, part of the signed payload. */
+  bundleId: string;
+  /** GameKit `teamPlayerID` (stable across the team's games), when available. */
+  teamPlayerId?: string;
+  /** GameKit `gamePlayerID` (stable per game), when available. */
+  gamePlayerId?: string;
+}
+
 /** Payload of the `signInStateChanged` event. */
 export type SignInStateChangedEvent = SignInResult;
 
@@ -81,6 +106,37 @@ export interface PlayGamesPlugin {
    * @since 0.1.0
    */
   getPlayer(): Promise<PlayerInfo>;
+
+  /**
+   * Request a one-time OAuth 2.0 server auth code for the signed-in Play Games
+   * player, for a backend to exchange for the AUTHORITATIVE player id (Google Play
+   * Games Services v2 `GamesSignInClient.requestServerSideAccess`).
+   *
+   * `serverClientId` is the OAuth 2.0 **web** client id backing the game; the code
+   * is redeemed against it server-side. `forceRefresh` (default `false`) requests a
+   * fresh code even if one was recently granted.
+   *
+   * Android only. iOS rejects (unimplemented); the web fallback resolves an empty
+   * `authCode`.
+   * @since 0.2.0
+   */
+  requestServerSideAccess(opts: {
+    serverClientId: string;
+    forceRefresh?: boolean;
+  }): Promise<{ authCode: string }>;
+
+  /**
+   * Fetch a GameKit identity-verification signature for the signed-in Game Center
+   * player (`GKLocalPlayer.fetchItems(forIdentityVerificationSignature:)`). A
+   * backend verifies the returned bundle against Apple's certificate to trust the
+   * player id rather than the untrusted client's claim. Rejects when no player is
+   * signed in.
+   *
+   * iOS only. Android rejects (unimplemented); the web fallback resolves an empty
+   * bundle.
+   * @since 0.2.0
+   */
+  fetchIdentityVerificationSignature(): Promise<IdentityVerificationSignature>;
 
   /**
    * Unlock an achievement by its platform id (Play Console achievement id on

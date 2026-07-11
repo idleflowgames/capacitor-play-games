@@ -39,6 +39,19 @@ internal class SignInModule(plugin: PlayGamesPlugin) : PgsModule(plugin) {
         }
     }
 
+    fun requestServerSideAccess(call: PluginCall) {
+        val serverClientId = call.getString("serverClientId")
+        if (serverClientId.isNullOrEmpty()) {
+            call.reject("serverClientId is required")
+            return
+        }
+        val forceRefresh = call.getBoolean("forceRefresh", false) ?: false
+        signInClient.requestServerSideAccess(serverClientId, forceRefresh)
+            .bind(call, "server-side access failed") { authCode ->
+                jsObject { put("authCode", authCode) }
+            }
+    }
+
     fun getPlayer(call: PluginCall) {
         playersClient.currentPlayer.bind(call, "player lookup failed") { player ->
             player.toJsObject()

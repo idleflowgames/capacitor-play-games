@@ -76,6 +76,38 @@ internal class SignInModule: PgsModule {
         call.resolve(playerInfo(from: GKLocalPlayer.local))
     }
 
+    func fetchIdentityVerificationSignature(_ call: CAPPluginCall) {
+        let localPlayer = GKLocalPlayer.local
+        guard localPlayer.isAuthenticated else {
+            call.reject("not signed in")
+            return
+        }
+        localPlayer.fetchItems(forIdentityVerificationSignature: {
+            publicKeyURL, signature, salt, timestamp, error in
+            if let error = error {
+                call.reject(error.localizedDescription, nil, error)
+                return
+            }
+            guard let publicKeyURL = publicKeyURL,
+                let signature = signature,
+                let salt = salt
+            else {
+                call.reject("identity verification signature unavailable")
+                return
+            }
+            call.resolve([
+                "publicKeyUrl": publicKeyURL.absoluteString,
+                "signature": signature.base64EncodedString(),
+                "salt": salt.base64EncodedString(),
+                "timestamp": timestamp,
+                "playerId": localPlayer.gamePlayerID,
+                "bundleId": Bundle.main.bundleIdentifier ?? "",
+                "teamPlayerId": localPlayer.teamPlayerID,
+                "gamePlayerId": localPlayer.gamePlayerID,
+            ])
+        })
+    }
+
     private func resolveSignedIn(_ call: CAPPluginCall) {
         let body: [String: Any] = [
             "signedIn": true,

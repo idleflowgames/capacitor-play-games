@@ -16,6 +16,7 @@ public class PlayGamesPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "signIn", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "isSignedIn", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getPlayer", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "fetchIdentityVerificationSignature", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "unlockAchievement", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "incrementAchievement", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "showAchievements", returnType: CAPPluginReturnPromise),
@@ -54,6 +55,9 @@ public class PlayGamesPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func signIn(_ call: CAPPluginCall) { signInModule.signIn(call) }
     @objc func isSignedIn(_ call: CAPPluginCall) { signInModule.isSignedIn(call) }
     @objc func getPlayer(_ call: CAPPluginCall) { signInModule.getPlayer(call) }
+    @objc func fetchIdentityVerificationSignature(_ call: CAPPluginCall) {
+        signInModule.fetchIdentityVerificationSignature(call)
+    }
 
     @objc func unlockAchievement(_ call: CAPPluginCall) { achievementsModule.unlock(call) }
     @objc func incrementAchievement(_ call: CAPPluginCall) { achievementsModule.increment(call) }

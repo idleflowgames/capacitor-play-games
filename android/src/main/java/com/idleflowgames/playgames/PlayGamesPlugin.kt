@@ -55,6 +55,7 @@ class PlayGamesPlugin : Plugin() {
     @PluginMethod fun signIn(call: PluginCall) = signIn.signIn(call)
     @PluginMethod fun isSignedIn(call: PluginCall) = signIn.isSignedIn(call)
     @PluginMethod fun getPlayer(call: PluginCall) = signIn.getPlayer(call)
+    @PluginMethod fun requestServerSideAccess(call: PluginCall) = signIn.requestServerSideAccess(call)
 
     @PluginMethod fun unlockAchievement(call: PluginCall) = achievements.unlock(call)
     @PluginMethod fun incrementAchievement(call: PluginCall) = achievements.increment(call)

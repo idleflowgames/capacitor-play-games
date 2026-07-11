@@ -99,6 +99,8 @@ On web every method resolves to a safe default, so gate feature usage behind
 * [`signIn(...)`](#signin)
 * [`isSignedIn()`](#issignedin)
 * [`getPlayer()`](#getplayer)
+* [`requestServerSideAccess(...)`](#requestserversideaccess)
+* [`fetchIdentityVerificationSignature()`](#fetchidentityverificationsignature)
 * [`unlockAchievement(...)`](#unlockachievement)
 * [`incrementAchievement(...)`](#incrementachievement)
 * [`showAchievements()`](#showachievements)
@@ -189,6 +191,56 @@ no-op fallback) it resolves an empty profile (`playerId: ""`).
 **Returns:** <code>Promise&lt;<a href="#playerinfo">PlayerInfo</a>&gt;</code>
 
 **Since:** 0.1.0
+
+--------------------
+
+
+### requestServerSideAccess(...)
+
+```typescript
+requestServerSideAccess(opts: { serverClientId: string; forceRefresh?: boolean; }) => Promise<{ authCode: string; }>
+```
+
+Request a one-time OAuth 2.0 server auth code for the signed-in Play Games
+player, for a backend to exchange for the AUTHORITATIVE player id (Google Play
+Games Services v2 `GamesSignInClient.requestServerSideAccess`).
+
+`serverClientId` is the OAuth 2.0 **web** client id backing the game; the code
+is redeemed against it server-side. `forceRefresh` (default `false`) requests a
+fresh code even if one was recently granted.
+
+Android only. iOS rejects (unimplemented); the web fallback resolves an empty
+`authCode`.
+
+| Param      | Type                                                             |
+| ---------- | ---------------------------------------------------------------- |
+| **`opts`** | <code>{ serverClientId: string; forceRefresh?: boolean; }</code> |
+
+**Returns:** <code>Promise&lt;{ authCode: string; }&gt;</code>
+
+**Since:** 0.2.0
+
+--------------------
+
+
+### fetchIdentityVerificationSignature()
+
+```typescript
+fetchIdentityVerificationSignature() => Promise<IdentityVerificationSignature>
+```
+
+Fetch a GameKit identity-verification signature for the signed-in Game Center
+player (`GKLocalPlayer.fetchItems(forIdentityVerificationSignature:)`). A
+backend verifies the returned bundle against Apple's certificate to trust the
+player id rather than the untrusted client's claim. Rejects when no player is
+signed in.
+
+iOS only. Android rejects (unimplemented); the web fallback resolves an empty
+bundle.
+
+**Returns:** <code>Promise&lt;<a href="#identityverificationsignature">IdentityVerificationSignature</a>&gt;</code>
+
+**Since:** 0.2.0
 
 --------------------
 
@@ -420,6 +472,25 @@ A signed-in player's public profile.
 | **`playerId`**    | <code>string</code> | Stable, platform-assigned player id (PGS player id / GameKit `gamePlayerID`). |
 | **`displayName`** | <code>string</code> | Display name as shown in Google Play Games / Game Center.                     |
 | **`avatarUrl`**   | <code>string</code> | URL of the player's avatar image, when the platform exposes one.              |
+
+
+#### IdentityVerificationSignature
+
+A GameKit identity-verification bundle
+(`GKLocalPlayer.fetchItems(forIdentityVerificationSignature:)`). A third-party
+server verifies `signature` against the certificate at `publicKeyUrl` to trust
+the Game Center `playerId` without relaying it through the untrusted client.
+
+| Prop               | Type                | Description                                                                   |
+| ------------------ | ------------------- | ----------------------------------------------------------------------------- |
+| **`publicKeyUrl`** | <code>string</code> | URL of Apple's public-key certificate used to verify `signature`.             |
+| **`signature`**    | <code>string</code> | Base64-encoded signature over the verification payload.                       |
+| **`salt`**         | <code>string</code> | Base64-encoded random salt Apple mixed into the signed payload.               |
+| **`timestamp`**    | <code>number</code> | Signature creation time, in epoch milliseconds (check freshness server-side). |
+| **`playerId`**     | <code>string</code> | The player id the signature attests (GameKit `gamePlayerID`).                 |
+| **`bundleId`**     | <code>string</code> | The app's bundle id, part of the signed payload.                              |
+| **`teamPlayerId`** | <code>string</code> | GameKit `teamPlayerID` (stable across the team's games), when available.      |
+| **`gamePlayerId`** | <code>string</code> | GameKit `gamePlayerID` (stable per game), when available.                     |
 
 
 #### Snapshot
