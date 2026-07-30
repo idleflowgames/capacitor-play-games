@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-07-30
+
+### Changed
+
+- Android: Play Games Services v2 SDK 21.0.0 to 22.0.0. The 22.0.0 public API
+  is additive over 21.0.0 (it adds `GameStatsClient` and `PlayerGameEvent`),
+  every symbol this plugin calls is unchanged, and no plugin source changed.
+- Android: Android Gradle Plugin 9.3.1, Kotlin Gradle Plugin 2.4.10.
+- Toolchain to latest: TypeScript 6 to 7.0.2 (the native `tsgo` compiler),
+  Biome 2.5.6, Capacitor 8.4.2, rollup 4.62.3, rimraf 6.1.3,
+  `@capacitor/docgen` 0.3.1, pnpm 11.18.0.
+- iOS: `capacitor-swift-pm` floor 8.4.2.
+- CI: `actions/setup-node` v7.
+
+### Requirements
+
+- Android `minSdkVersion` 24. Play Games Services v2 SDK 22.0.0 raises its own
+  floor from 21 to 24, so an app that sets `minSdkVersion` below 24 fails the
+  manifest merge. This module already defaulted to 24, and Capacitor 8 requires
+  24, so an app on stock Capacitor 8 settings needs no change.
+
 ## [0.2.0] - 2026-07-12
 
 ### Added
